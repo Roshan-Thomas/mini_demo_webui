@@ -653,6 +653,7 @@ def create_ui(wrap_gradio_gpu_call):
             token_button.click(fn=update_token_counter, inputs=[txt2img_prompt, steps], outputs=[token_counter])
 
     with gr.Blocks(analytics_enabled=False) as img2img_interface:
+        dummy_component = gr.Label(visible=False)
         img2img_prompt, roll, img2img_prompt_style, img2img_negative_prompt, img2img_prompt_style2, submit, img2img_interrogate, img2img_deepbooru, img2img_prompt_style_apply, img2img_save_style, paste, token_counter, token_button = create_toprow(is_img2img=True)
 
         with gr.Row(elem_id='img2img_progress_row'):
@@ -1301,9 +1302,19 @@ Requested path was: {f}
             column.__exit__()
 
     interfaces = [
-        (img2img_interface, "img2img", "img2img"),
+        (img2img_interface, "Stable Diffusion", "img2img"),
         (settings_interface, "Settings", "settings"),
     ]
+
+    # interfaces = [
+    #     (txt2img_interface, "txt2img", "txt2img"),
+    #     (img2img_interface, "img2img", "img2img"),
+    #     (extras_interface, "Extras", "extras"),
+    #     (pnginfo_interface, "PNG Info", "pnginfo"),
+    #     (modelmerger_interface, "Checkpoint Merger", "modelmerger"),
+    #     (textual_inversion_interface, "Textual inversion", "ti"),
+    #     (settings_interface, "Settings", "settings"),
+    # ]
 
     with open(os.path.join(script_path, "style.css"), "r", encoding="utf8") as file:
         css = file.read()
