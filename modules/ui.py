@@ -732,9 +732,9 @@ def create_ui(wrap_gradio_gpu_call):
                 with gr.Group():
                     with gr.Row():
                         save = gr.Button('Save')
-                        img2img_send_to_img2img = gr.Button('Send to img2img')
-                        img2img_send_to_inpaint = gr.Button('Send to inpaint')
-                        img2img_send_to_extras = gr.Button('Send to extras')
+                        # img2img_send_to_img2img = gr.Button('Send to img2img')
+                        # img2img_send_to_inpaint = gr.Button('Send to inpaint')
+                        # img2img_send_to_extras = gr.Button('Send to extras')
                         button_id = "hidden_element" if shared.cmd_opts.hide_ui_dir_config else 'open_folder'
                         open_img2img_folder = gr.Button(folder_symbol, elem_id=button_id)
 
@@ -1306,16 +1306,6 @@ Requested path was: {f}
         (settings_interface, "Settings", "settings"),
     ]
 
-    # interfaces = [
-    #     (txt2img_interface, "txt2img", "txt2img"),
-    #     (img2img_interface, "img2img", "img2img"),
-    #     (extras_interface, "Extras", "extras"),
-    #     (pnginfo_interface, "PNG Info", "pnginfo"),
-    #     (modelmerger_interface, "Checkpoint Merger", "modelmerger"),
-    #     (textual_inversion_interface, "Textual inversion", "ti"),
-    #     (settings_interface, "Settings", "settings"),
-    # ]
-
     with open(os.path.join(script_path, "style.css"), "r", encoding="utf8") as file:
         css = file.read()
 
@@ -1403,20 +1393,6 @@ Requested path was: {f}
             outputs=[init_img_with_mask] + img2img_fields,
         )
 
-        img2img_send_to_img2img.click(
-            fn=lambda x: image_from_url_text(x),
-            _js="extract_image_from_gallery_img2img",
-            inputs=[img2img_gallery],
-            outputs=[init_img],
-        )
-
-        img2img_send_to_inpaint.click(
-            fn=lambda x: image_from_url_text(x),
-            _js="extract_image_from_gallery_inpaint",
-            inputs=[img2img_gallery],
-            outputs=[init_img_with_mask],
-        )
-
         send_to_extras.click(
             fn=lambda x: image_from_url_text(x),
             _js="extract_image_from_gallery_extras",
@@ -1442,12 +1418,7 @@ Requested path was: {f}
             outputs=[],
         )
 
-        img2img_send_to_extras.click(
-            fn=lambda x: image_from_url_text(x),
-            _js="extract_image_from_gallery_extras",
-            inputs=[img2img_gallery],
-            outputs=[extras_image],
-        )
+
 
         modules.generation_parameters_copypaste.connect_paste(pnginfo_send_to_txt2img, txt2img_paste_fields, generation_info, 'switch_to_txt2img')
         modules.generation_parameters_copypaste.connect_paste(pnginfo_send_to_img2img, img2img_paste_fields, generation_info, 'switch_to_img2img_img2img')
