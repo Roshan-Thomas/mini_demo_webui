@@ -730,21 +730,6 @@ def create_ui(wrap_gradio_gpu_call):
                     img2img_gallery = gr.Gallery(label='Output', show_label=False, elem_id='img2img_gallery').style(grid=4)
 
                 with gr.Group():
-                    with gr.Row():
-                        save = gr.Button('Save')
-                        # img2img_send_to_img2img = gr.Button('Send to img2img')
-                        # img2img_send_to_inpaint = gr.Button('Send to inpaint')
-                        # img2img_send_to_extras = gr.Button('Send to extras')
-                        button_id = "hidden_element" if shared.cmd_opts.hide_ui_dir_config else 'open_folder'
-                        open_img2img_folder = gr.Button(folder_symbol, elem_id=button_id)
-
-                    with gr.Row():
-                        do_make_zip = gr.Checkbox(label="Make Zip when Save?", value=False)
-                    
-                    with gr.Row():
-                        download_files = gr.File(None, file_count="multiple", interactive=False, show_label=False, visible=False)
-
-                with gr.Group():
                     html_info = gr.HTML()
                     generation_info = gr.Textbox(visible=False)
 
@@ -1406,19 +1391,11 @@ Requested path was: {f}
             outputs=[],
         )
 
-        open_img2img_folder.click(
-            fn=lambda: open_folder(opts.outdir_samples or opts.outdir_img2img_samples),
-            inputs=[],
-            outputs=[],
-        )
-
         open_extras_folder.click(
             fn=lambda: open_folder(opts.outdir_samples or opts.outdir_extras_samples),
             inputs=[],
             outputs=[],
         )
-
-
 
         modules.generation_parameters_copypaste.connect_paste(pnginfo_send_to_txt2img, txt2img_paste_fields, generation_info, 'switch_to_txt2img')
         modules.generation_parameters_copypaste.connect_paste(pnginfo_send_to_img2img, img2img_paste_fields, generation_info, 'switch_to_img2img_img2img')
