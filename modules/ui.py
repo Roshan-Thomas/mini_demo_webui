@@ -451,20 +451,7 @@ def create_toprow(is_img2img):
                     outputs=[],
                 )
 
-            with gr.Row(scale=1):
-                if is_img2img:
-                    interrogate = gr.Button('Interrogate\nCLIP', elem_id="interrogate")
-                    if cmd_opts.deepdanbooru:
-                        deepbooru = gr.Button('Interrogate\nDeepBooru', elem_id="deepbooru")
-                    else:
-                        deepbooru = None
-                else:
-                    interrogate = None
-                    deepbooru = None
-                prompt_style_apply = gr.Button('Apply style', elem_id="style_apply")
-                save_style = gr.Button('Create style', elem_id="style_create")
-
-    return prompt, roll, prompt_style, negative_prompt, prompt_style2, submit, interrogate, deepbooru, prompt_style_apply, save_style, paste, token_counter, token_button
+    return prompt, roll, prompt_style, negative_prompt, prompt_style2, submit, paste, token_counter, token_button
 
 
 def setup_progressbar(progressbar, preview, id_part, textinfo=None):
@@ -493,7 +480,7 @@ def create_ui(wrap_gradio_gpu_call):
     import modules.txt2img
 
     with gr.Blocks(analytics_enabled=False) as txt2img_interface:
-        txt2img_prompt, roll, txt2img_prompt_style, txt2img_negative_prompt, txt2img_prompt_style2, submit, _, _, txt2img_prompt_style_apply, txt2img_save_style, paste, token_counter, token_button = create_toprow(is_img2img=False)
+        txt2img_prompt, roll, txt2img_prompt_style, txt2img_negative_prompt, txt2img_prompt_style2, submit, paste, token_counter, token_button = create_toprow(is_img2img=False)
         dummy_component = gr.Label(visible=False)
 
         with gr.Row(elem_id='txt2img_progress_row'):
@@ -654,7 +641,7 @@ def create_ui(wrap_gradio_gpu_call):
 
     with gr.Blocks(analytics_enabled=False) as img2img_interface:
         dummy_component = gr.Label(visible=False)
-        img2img_prompt, roll, img2img_prompt_style, img2img_negative_prompt, img2img_prompt_style2, submit, img2img_interrogate, img2img_deepbooru, img2img_prompt_style_apply, img2img_save_style, paste, token_counter, token_button = create_toprow(is_img2img=True)
+        img2img_prompt, roll, img2img_prompt_style, img2img_negative_prompt, img2img_prompt_style2, submit, paste, token_counter, token_button = create_toprow(is_img2img=True)
 
         with gr.Row(elem_id='img2img_progress_row'):
             with gr.Column(scale=1):
@@ -796,19 +783,6 @@ def create_ui(wrap_gradio_gpu_call):
             img2img_prompt.submit(**img2img_args)
             submit.click(**img2img_args)
 
-            img2img_interrogate.click(
-                fn=interrogate,
-                inputs=[init_img],
-                outputs=[img2img_prompt],
-            )
-
-            if cmd_opts.deepdanbooru:
-                img2img_deepbooru.click(
-                    fn=interrogate_deepbooru,
-                    inputs=[init_img],
-                    outputs=[img2img_prompt],
-                )
-
             save.click(
                 fn=wrap_gradio_call(save_files),
                 _js="(x, y, z, w) => [x, y, z, selected_gallery_index()]",
@@ -840,24 +814,6 @@ def create_ui(wrap_gradio_gpu_call):
             prompts = [(txt2img_prompt, txt2img_negative_prompt), (img2img_prompt, img2img_negative_prompt)]
             style_dropdowns = [(txt2img_prompt_style, txt2img_prompt_style2), (img2img_prompt_style, img2img_prompt_style2)]
             style_js_funcs = ["update_txt2img_tokens", "update_img2img_tokens"]
-
-            for button, (prompt, negative_prompt) in zip([txt2img_save_style, img2img_save_style], prompts):
-                button.click(
-                    fn=add_style,
-                    _js="ask_for_style_name",
-                    # Have to pass empty dummy component here, because the JavaScript and Python function have to accept
-                    # the same number of parameters, but we only know the style-name after the JavaScript prompt
-                    inputs=[dummy_component, prompt, negative_prompt],
-                    outputs=[txt2img_prompt_style, img2img_prompt_style, txt2img_prompt_style2, img2img_prompt_style2],
-                )
-
-            for button, (prompt, negative_prompt), (style1, style2), js_func in zip([txt2img_prompt_style_apply, img2img_prompt_style_apply], prompts, style_dropdowns, style_js_funcs):
-                button.click(
-                    fn=apply_styles,
-                    _js=js_func,
-                    inputs=[prompt, negative_prompt, style1, style2],
-                    outputs=[prompt, negative_prompt, style1, style2],
-                )
 
             img2img_paste_fields = [
                 (img2img_prompt, "Prompt"),
